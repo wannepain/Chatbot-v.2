@@ -2,13 +2,16 @@ from flask import Flask, json, jsonify
 from flask import request
 from flask_cors import CORS, cross_origin
 import os
-
+from src.model import load_model, load_pipeline
+from src.respond import respond
 
 # app config
 app = Flask(__name__)
 app.config["CORS_HEADERS"] = "Content-Type"
 
 cors = CORS(app)
+model, tokenizer = load_model("NousResearch/Meta-Llama-3-8B-Instruct")
+pipeline = load_pipeline(model, tokenizer)
 
 
 @app.route("/")
@@ -16,21 +19,19 @@ def respond_test():
     return jsonify({"hello": "world"})
 
 
-# @app.route("/respond", methods=["POST"])
-# @cross_origin()
-# def respond_route():  # need to move the used question idx to the global scope
-#     request_data = request.get_json()
-#     history_in_req = request_data["history"]
-#     used_question_idx = request_data["used_question_idx"]
+@app.route("/respond", methods=["POST"])
+@cross_origin()
+def respond_route():  # need to move the used question idx to the global scope
+    request_data = request.get_json()
+    history_in_req = request_data["history"]
 
-#     respond(history_in_req, corpus, used_question_idx, nlp=get_nlp())
+    history = respond(history=history_in_req, pipeline=pipeline)
 
-#     return jsonify(
-#         {
-#             "history": history_in_req,
-#             "used_question_idx": used_question_idx,
-#         }
-#     )
+    return jsonify(
+        {
+            "history": history,
+        }
+    )
 
 
 # @app.route("/career", methods=["POST"])
