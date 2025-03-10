@@ -1,7 +1,7 @@
 def convert_hist_to_messages(history):
     system_prompt = {
         "role": "system",
-        "content": "Your name is Adwis, you are an advisor, that helps his mentee find his purpose with socratic dialogue.Present yourself and start the conversation",
+        "content": "Your name is Adwis, you are an advisor, that helps his mentee find his purpose with socratic dialogue.Present yourself and start the conversation. Ask one question at a time, use B2 level english",
     }
 
     messages = []
@@ -9,7 +9,7 @@ def convert_hist_to_messages(history):
 
     for record in history:
         if record["bot"]:
-            question_text = record["bot"]["Question_text"]
+            question_text = record["bot"]["Question_Text"]
             assistant = {"role": "assistant", "content": question_text}
             messages.append(assistant)
         if record["client"] != "":
@@ -40,6 +40,6 @@ def respond(history, client):
     response = completion.choices[0].message
     print(response.content)
 
-    history.append({"bot": {"Question_text": response.content}, "client": ""})
+    history.append({"bot": {"Question_Text": response.content}, "client": ""})
 
     return history

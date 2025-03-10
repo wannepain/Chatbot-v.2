@@ -12,7 +12,7 @@ def evaluate(history, client):
 
     system_prompt = {
         "role": "system",
-        "content": f"You are provided with a conversation between a mentor and a mentee. The mentor is trying to help the mentee find his purpose. You should find the career that the mentee is made for. Return the career name, short description, and average salary in USD in this JSON format: {format_example}",
+        "content": f"You are provided with a conversation between a mentor and a mentee. The mentor is trying to help the mentee find his purpose. You should find the career that the mentee is made for. Return the career name, short description (1-2 short sentances), and average salary in USD in this JSON format: {format_example}",
     }
     user_prompt = {
         "role": "user",
@@ -24,6 +24,7 @@ def evaluate(history, client):
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=messages,
+        response_format={"type": "json_object"},
     )
 
     response = completion.choices[0].message.content  # Extract text content
