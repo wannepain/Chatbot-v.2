@@ -12,7 +12,7 @@ def evaluate(history, client):
 
     system_prompt = {
         "role": "system",
-        "content": f"You are provided with a conversation between a mentor and a mentee. The mentor is trying to help the mentee find his purpose. You should find the career that the mentee is made for. Return the career name, short description (1-2 short sentances), and average salary in USD in this JSON format: {format_example}",
+        "content": f"You are provided with a conversation between a mentor and a mentee. The mentor is trying to help the mentee find his purpose. You should find the career that the mentee is made for. Return the career name, short description (1-2 short sentances), and average yearly salary in USD in this JSON format: {format_example}",
     }
     user_prompt = {
         "role": "user",
