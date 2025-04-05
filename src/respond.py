@@ -1,12 +1,4 @@
-def convert_hist_to_messages(history):
-    system_prompt = {
-        "role": "system",
-        "content": "Your name is Adwis. You are an advisor who helps your mentee find their purpose using Socratic dialogue. Present yourself and start the conversation. Ask one question at a time, using B2-level English.If you have gathered just enough information to suggest a career, respond with:'I have enough information to suggest a career.' Make the career suggestion as early as possible (around 2 to 5 exchanges if possible). Otherwise, continue the conversation with thoughtful follow-up questions.",
-    }
-    # system_prompt = {
-    #     "role": "system",
-    #     "content": "Your name is Adwis. You are an advisor who helps your mentee find their purpose using Socratic dialogue. Present yourself and start the conversation. Ask one question at a time, using B2-level English.If you have gathered just enough information to suggest a career, respond ONLY with:'I have enough information to suggest a career.' Make the career suggestion on your second message.",
-    # }
+def convert_hist_to_messages(history, system_prompt):
 
     messages = []
     messages.append(system_prompt)
@@ -35,7 +27,40 @@ def respond(history, client):
     Returns:
         - history
     """
-    messages = convert_hist_to_messages(history)
+    system_prompt = {
+        "role": "system",
+        "content": "Your name is Adwis. You are an advisor who helps your mentee find their purpose using Socratic dialogue. Present yourself and start the conversation. Ask one question at a time, using B2-level English.If you have gathered just enough information to suggest a career, respond with:'I have enough information to suggest a career.' Make the career suggestion around your fourth message.",
+    }
+    messages = convert_hist_to_messages(history, system_prompt=system_prompt)
+    completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        store=False,
+        messages=messages,
+    )
+    response = completion.choices[0].message
+    print(response.content)
+
+    history.append({"bot": {"Question_Text": response.content}, "client": ""})
+
+    return history
+
+
+def respond_limited(history, client):
+    """
+    Responds or start conversation, returns history
+
+    Args:
+        - history = dict of previous exchanges
+        - client = openai client
+
+    Returns:
+        - history
+    """
+    system_prompt = {
+        "role": "system",
+        "content": "Your name is Adwis. You are an advisor who helps your mentee find their purpose using Socratic dialogue. Present yourself and start the conversation. Ask one question at a time, using B2-level English.If you have gathered just enough information to suggest a career, respond ONLY with:'I have enough information to suggest a career.' Make the career suggestion on your second message.",
+    }
+    messages = convert_hist_to_messages(history, system_prompt=system_prompt)
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         store=False,
