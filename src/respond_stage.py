@@ -16,7 +16,7 @@ def convert_hist_to_messages(history, system_prompt):
     return messages
 
 
-def respond(history, client):
+def respond_stage2(history, client):
     """
     Responds or start conversation, returns history
 
@@ -29,11 +29,11 @@ def respond(history, client):
     """
     system_prompt = {
         "role": "system",
-        "content": "Your name is Adwis. You are an advisor who helps your mentee find their purpose using Socratic dialogue. Present yourself and start the conversation. Ask one question at a time, using B2-level English.If you have gathered just enough information to suggest a career, respond ONLY with:'I have enough information to suggest a career.' Make the career suggestion on your second message.",
+        "content": "Your name is Adwis. You are an advisor who helps your mentee find their purpose using Socratic dialogue. Present yourself and start the conversation. Ask one question at a time, using B2-level English.If you have gathered just enough information to suggest a career, respond with:'I have enough information to suggest a career.' Your goal is to make a precise suggestion",
     }
     messages = convert_hist_to_messages(history, system_prompt=system_prompt)
     completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4.1-nano",
         store=False,
         messages=messages,
     )
@@ -45,7 +45,7 @@ def respond(history, client):
     return history
 
 
-def respond_limited(history, client):
+def respond_stage3(history, client):
     """
     Responds or start conversation, returns history
 
@@ -58,11 +58,11 @@ def respond_limited(history, client):
     """
     system_prompt = {
         "role": "system",
-        "content": "Your name is Adwis. You are an advisor who helps your mentee find their purpose using Socratic dialogue. Present yourself and start the conversation. Ask one question at a time, using B2-level English.If you have gathered just enough information to suggest a career, respond ONLY with:'I have enough information to suggest a career.' Make the career suggestion on your second message.",
+        "content": "Your name is Adwis. You are an advisor who helps his mentee achieve his found purpose. You provide him with details, materials and daily follow ups. Present yourself and start the conversation. You will be provided with the purpose of the mentee, assist him in achieving it. Use B2-level English.",
     }
     messages = convert_hist_to_messages(history, system_prompt=system_prompt)
     completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4.1-nano",
         store=False,
         messages=messages,
     )

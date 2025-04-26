@@ -6,6 +6,7 @@ from src.respond import respond, respond_limited
 from openai import OpenAI
 from src.career import evaluate
 from src.compliment import compliment
+from src.respond_stage import respond_stage2, respond_stage3
 
 
 # app config
@@ -50,6 +51,42 @@ def career_route():
     history_in_req = request_data["history"]
     career = evaluate(history=history_in_req, client=client)
     return jsonify({"career": career})
+
+
+@app.route(
+    "/respond/stage/2",
+    methods=["POST"],
+)
+@cross_origin()
+def respond_stage_2_route():  # the history should contain the previous conversation with career suggestions.
+    request_data = request.get_json()
+    history_in_req = request_data["history"]
+
+    history = respond_stage2(history=history_in_req, client=client)
+
+    return jsonify(
+        {
+            "history": history,
+        }
+    )
+
+
+@app.route(
+    "/respond/stage/3",
+    methods=["POST"],
+)
+@cross_origin()
+def respond_stage_3_route():  # must be provided with desired career
+    request_data = request.get_json()
+    history_in_req = request_data["history"]
+
+    history = respond_stage2(history=history_in_req, client=client)
+
+    return jsonify(
+        {
+            "history": history,
+        }
+    )
 
 
 @app.route(
