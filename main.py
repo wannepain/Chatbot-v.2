@@ -32,7 +32,7 @@ def respond_route():  # need to move the used question idx to the global scope
     request_data = request.get_json()
     history_in_req = request_data["history"]
 
-    history = respond(history=history_in_req, client=client, summary=summary)
+    history = respond(history=history_in_req, client=client)
 
     return jsonify(
         {
