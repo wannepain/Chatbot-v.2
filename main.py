@@ -2,11 +2,10 @@ from flask import Flask, json, jsonify
 from flask import request
 from flask_cors import CORS, cross_origin
 import os
-from src.respond import respond, respond_limited
+from src.respond import respond, respond_limited, respond_stage2, respond_stage3
 from openai import OpenAI
 from src.career import evaluate
 from src.compliment import compliment
-from src.respond_stage import respond_stage2, respond_stage3
 
 
 # app config
@@ -32,7 +31,7 @@ def respond_route():  # need to move the used question idx to the global scope
     request_data = request.get_json()
     history_in_req = request_data["history"]
 
-    history = respond(history=history_in_req, client=client)
+    history = respond(history=history_in_req, client=client, summary=summary)
 
     return jsonify(
         {
@@ -79,8 +78,11 @@ def respond_stage_2_route():  # the history should contain the previous conversa
 def respond_stage_3_route():  # must be provided with desired career
     request_data = request.get_json()
     history_in_req = request_data["history"]
+    mentee_purpose = request_data["mentee_purpose"]
 
-    history = respond_stage2(history=history_in_req, client=client)
+    history = respond_stage3(
+        history=history_in_req, client=client, mentee_purpose=mentee_purpose
+    )
 
     return jsonify(
         {
