@@ -57,7 +57,7 @@ def gpt_summarize_history(history, client):
     summarization_prompt = [
         {
             "role": "system",
-            "content": "You are a summarizer. Create a 2-3 sentence summary of the user's interests and preferences based on the conversation. Focus on the career direction and purpose. Also include what they like and enjoy doing. Dont forget the information from the beginning of the conversation.",
+            "content": "You are a summarizer. Create a 2-4 sentence summary of the user's interests and preferences based on the conversation. Focus on the career direction and purpose. Also include what they like and enjoy doing. Dont forget the information from the beginning of the conversation. include how many messages were exchanged.",
         },
         {"role": "user", "content": f"Conversation history:\n{text_to_summarize}"},
     ]
@@ -138,7 +138,7 @@ def respond_limited(history, client):
     return history
 
 
-def respond_stage2(history, client):
+def respond_stage2(history, client, previous_conversation):
     """
     Responds or start conversation, returns history
 
@@ -153,12 +153,12 @@ def respond_stage2(history, client):
         "role": "system",
         "content": (
             "Your name is Adwis. You are an advisor who helps your mentee clarify their purpose and career direction. "
-            "You will be provided with a conversation history. Your goal is to suggest a precise career based on the information gathered. "
+            "You will be provided with a conversation summary. Your goal is to suggest a precise career based on the information gathered. "
             "IMPORTANT: Do NOT give advice or instructions about how to achieve the career. Only suggest the career itself when ready. "
             "Ask one open-ended question at a time, using B2-level English. "
             "When you have enough information to suggest a career, say exactly: 'I have enough information to suggest a career.'"
-            "Suggest a career as soon as possible"
-            "Then, wait for confirmation from the user before giving your suggestion."
+            "Suggest a career as soon as possible 4-6 exhanges in. "
+            f"conversation summary: {gpt_summarize_history(previous_conversation, client)}"
         ),
     }
 

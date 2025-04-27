@@ -61,8 +61,13 @@ def career_route():
 def respond_stage_2_route():  # the history should contain the previous conversation with career suggestions.
     request_data = request.get_json()
     history_in_req = request_data["history"]
+    previous_conversation = request_data["previous_conversation"]
 
-    history = respond_stage2(history=history_in_req, client=client)
+    history = respond_stage2(
+        history=history_in_req,
+        client=client,
+        previous_conversation=previous_conversation,
+    )
 
     return jsonify(
         {
