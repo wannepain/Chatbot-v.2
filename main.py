@@ -2,6 +2,7 @@ from flask import Flask, json, jsonify
 from flask import request
 from flask_cors import CORS, cross_origin
 import os
+from src.check_up import check_up
 from src.respond import respond, respond_limited, respond_stage2, respond_stage3
 from openai import OpenAI
 from src.career import evaluate
@@ -111,6 +112,28 @@ def compliment_route():
         )
     result = compliment(history=history_in_req, client=client)
     return jsonify({"compliment": result})
+
+
+@app.route(
+    "/check_up",
+    methods=["POST"],
+)
+@cross_origin()
+def check_up_route():  # creates check up message based on stage 3 history
+    request_data = request.get_json()
+    history_in_req = request_data["history"]
+    if history_in_req is None or len(history_in_req) == 0:
+        return (
+            jsonify(
+                {
+                    "error": "history is None or empty",
+                    "message": None,
+                }
+            ),
+            400,
+        )
+    result = check_up(history=history_in_req, client=client)
+    return jsonify({"check_up": result})
 
 
 @app.route(
