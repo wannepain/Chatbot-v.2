@@ -138,35 +138,82 @@ def respond_limited(history, client):
     return history
 
 
+# def respond_stage2(history, client, previous_conversation):
+#     """
+#     Responds or start conversation, returns history
+
+#     Args:
+#         - history = dict of previous exchanges
+#         - client = openai client
+
+#     Returns:
+#         - history
+#     """
+#     system_prompt = {
+#         "role": "system",
+#         "content": (
+#             "Your name is Adwis. You are an advisor who helps your mentee clarify their purpose and career direction. "
+#             "You will be provided with a conversation summary. Your goal is to suggest a precise career based on the information gathered. "
+#             "IMPORTANT: Do NOT give advice or instructions about how to achieve the career. Only suggest the career itself when ready. "
+#             "Ask one open-ended question at a time, using B2-level English. "
+#             "When you have enough information to suggest a career, say exactly: 'I have enough information to suggest a career.' Do so on your second message. "
+#             f"conversation summary: {gpt_summarize_history(previous_conversation, client)}"
+#         ),
+#     }
+
+#     messages = convert_hist_to_messages(
+#         history, system_prompt=system_prompt, client=client
+#     )
+#     completion = client.chat.completions.create(
+#         model="gpt-4.1-nano",
+#         store=False,
+#         messages=messages,
+#     )
+#     response = completion.choices[0].message
+#     print(response.content)
+
+#     history.append({"bot": {"Question_Text": response.content}, "client": ""})
+
+#     return history
+
+
 def respond_stage2(history, client, previous_conversation):
     """
-    Responds or start conversation, returns history
+    Responds or starts conversation, returns history.
 
     Args:
         - history = dict of previous exchanges
         - client = openai client
+        - previous_conversation = full conversation history for summarization
 
     Returns:
-        - history
+        - updated history
     """
+    # First, create the summary separately
+    conversation_summary = gpt_summarize_history(previous_conversation, client)
+
     system_prompt = {
         "role": "system",
         "content": (
-            "Your name is Adwis. You are an advisor who helps your mentee clarify their purpose and career direction. "
-            "You will be provided with a conversation summary. Your goal is to suggest a precise career based on the information gathered. "
-            "IMPORTANT: Do NOT give advice or instructions about how to achieve the career. Only suggest the career itself when ready. "
-            "Ask one open-ended question at a time, using B2-level English. "
-            "When you have enough information to suggest a career, say exactly: 'I have enough information to suggest a career.'"
-            "Suggest a career as soon as possible 4-6 exhanges in. "
-            f"conversation summary: {gpt_summarize_history(previous_conversation, client)}"
+            "You are Adwis, a career advisor helping a mentee clarify their career direction. "
+            f"Here is a summary of the previous conversation: {conversation_summary}\n\n"
+            "YOUR GOAL:\n"
+            "- Suggest a precise career based on the provided information.\n"
+            "- On your FOURTH message, you MUST say exactly: 'I have enough information to suggest a career.'\n"
+            "- Then, suggest the career directly after the mentee responds.\n\n"
+            "RULES:\n"
+            "- Do NOT explain how to achieve the career.\n"
+            "- Ask one open-ended question at a time.\n"
+            "- Use simple B2-level English."
         ),
     }
 
     messages = convert_hist_to_messages(
         history, system_prompt=system_prompt, client=client
     )
+
     completion = client.chat.completions.create(
-        model="gpt-4.1-nano",
+        model="gpt-4-1106-preview",  # "gpt-4.1-nano" doesn't exist, maybe you meant "gpt-4-1106-preview" or "gpt-4-turbo"?
         store=False,
         messages=messages,
     )
